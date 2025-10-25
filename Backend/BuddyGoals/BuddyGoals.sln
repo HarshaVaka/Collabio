@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuddyGoals", "BuddyGoals.csproj", "{545ACED2-B93D-4D99-82FE-90F4466CA43B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{545ACED2-B93D-4D99-82FE-90F4466CA43B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545ACED2-B93D-4D99-82FE-90F4466CA43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545ACED2-B93D-4D99-82FE-90F4466CA43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545ACED2-B93D-4D99-82FE-90F4466CA43B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0FB091EF-43F8-46F3-A2E1-3FF349A31717}
+	EndGlobalSection
+EndGlobal
