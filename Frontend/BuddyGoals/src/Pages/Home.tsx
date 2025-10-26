@@ -1,6 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { HomeService } from "../services/HomeService";
 import { useEffect } from "react";
+import {
+    Home as HomeIcon,
+    Search as SeachIcon,
+    MessageSquare as ChatIcon,
+    Users as UsersIcon,
+    Settings as SettingsIcon,
+    User as UserIcon,
+} from "lucide-react";
 
 export default function Home() {
     const { data, isFetching, isError, error, isSuccess } = useQuery({
@@ -19,12 +27,15 @@ export default function Home() {
         return (
             <div className="flex h-screen bg-gradient-to-br from-lime-50 via-lime-100 to-teal-100">
                 {/* Left Sidebar */}
-                <aside className="w-100 bg-gradient-to-b from-lime-700 to-lime-700 shadow-md flex flex-col p-4 fixed h-full ">
-                    <h1 className="text-2xl font-bold mb-6 text-green-50">MyApp</h1>
+                <aside className="w-48 sm:w-56 md:w-64 lg:w-72 bg-gradient-to-r from-emerald-800 to-teal-800 shadow-md flex flex-col p-4 fixed h-full ">
+                    <h1 className="text-2xl font-bold mb-6 bg-gradient-to-br from text-green-50">Collab.io</h1>
                     <nav className="flex flex-col gap-4">
-                        <a href="#" className="text-green-50 hover:text-green-950 font-medium text-xl">Home</a>
-                        <a href="#" className="text-green-50 hover:text-green-950 font-medium text-xl">Dashboard</a>
-                        <a href="#" className="text-green-50 hover:text-green-950 font-medium text-xl">Settings</a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><HomeIcon size={20} /> <span className="ps-3">Home</span></a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><SeachIcon size={20} /> <span className="ps-3">Explore</span></a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><ChatIcon size={20} /><span className="ps-3">Chats</span></a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><UsersIcon size={20} /> <span className="ps-3">Groups & Events</span></a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><SettingsIcon size={20} /> <span className="ps-3">Settings</span></a>
+                        <a href="#" className="flex flex-row text-green-50 hover:text-green-950 font-medium text-xl shadow-lg border border-green-100 rounded-2xl p-3 bg-gradient-to-r from-emerald-600 to-teal-600"><UserIcon size={20} /> <span className="ps-3">Profile</span></a>
                     </nav>
                 </aside>
 
