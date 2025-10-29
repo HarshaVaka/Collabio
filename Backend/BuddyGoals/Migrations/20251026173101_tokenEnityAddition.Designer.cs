@@ -3,6 +3,7 @@ using System;
 using BuddyGoals.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuddyGoals.Migrations
 {
     [DbContext(typeof(BuddyGoalsDbContext))]
-    partial class BuddyGoalsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026173101_tokenEnityAddition")]
+    partial class tokenEnityAddition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,59 +123,6 @@ namespace BuddyGoals.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BuddyGoals.Entities.UserProfile", b =>
-                {
-                    b.Property<Guid>("ProfileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Bio")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CountryCode")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly?>("DOB")
-                        .HasColumnType("date");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProfileUrl")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ProfileId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserProfiles");
-                });
-
             modelBuilder.Entity("BuddyGoals.Entities.UserRoleMapping", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -193,17 +143,6 @@ namespace BuddyGoals.Migrations
                     b.HasOne("BuddyGoals.Entities.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BuddyGoals.Entities.UserProfile", b =>
-                {
-                    b.HasOne("BuddyGoals.Entities.User", "User")
-                        .WithOne("Profile")
-                        .HasForeignKey("BuddyGoals.Entities.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -236,8 +175,6 @@ namespace BuddyGoals.Migrations
 
             modelBuilder.Entity("BuddyGoals.Entities.User", b =>
                 {
-                    b.Navigation("Profile");
-
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserRoles");

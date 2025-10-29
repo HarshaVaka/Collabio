@@ -1,5 +1,5 @@
 import './App.css'
-import { Route, Routes, BrowserRouter } from 'react-router-dom'
+import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom'
 import AuthPage from './Pages/AuthPage';
 import Home from './Pages/Home';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -13,6 +13,9 @@ import { Community } from './Pages/Community';
 import { Settings } from './Pages/Settings';
 import { Chat } from './Pages/Chat';
 import { MainLayout } from './Components/MainLayout';
+import { Todo } from './Pages/Todo';
+import { TodoItem } from './Pages/Todo/TodoItem';
+import { ProtectedRoute } from './Components/ProtectedRoute';
 
 
 function App() {
@@ -31,16 +34,22 @@ function App() {
           <GlobalLoader />
           <Toaster position="top-right" reverseOrder={false} />
           <Routes>
-            {/* Default redirect to /home */}
-            <Route path="/" element={<MainLayout />}>
-              <Route path="home" element={<Home />} />
-              <Route path="explore" element={<Explore />} />
-              <Route path="community" element={<Community />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="chats" element={<Chat />} />
-              <Route path="profile" element={<Profile />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Navigate to="home" replace />} />
+                <Route path="home" element={<Home />} />
+                <Route path="explore" element={<Explore />} />
+                <Route path="community" element={<Community />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="chats" element={<Chat />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="todo" element={<Todo />} >
+                  <Route path=":id" element={<TodoItem />} />
+                </Route>
+              </Route>
             </Route>
             <Route path="/auth" element={<AuthPage />} >
+              <Route index element={<Navigate to="login" replace />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
             </Route>

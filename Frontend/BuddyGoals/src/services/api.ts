@@ -27,7 +27,6 @@ API.interceptors.request.use(
     }
 
     const token = getAccessToken();
-    console.log(isTokenExpired())
     if (!isTokenExpired() && token) {
       if (config.headers) {
         config.headers["Authorization"] = `Bearer ${token}`;
@@ -42,7 +41,6 @@ API.interceptors.request.use(
       setRefreshPromise(
         AuthService.fetchNewAccessToken()
           .catch((err) => {
-            console.error("Token refresh failed:", err);
             throw err;
           })
           .finally(() => setRefreshPromise(null))
@@ -109,7 +107,6 @@ API.interceptors.response.use(
         // Retry original request
         return API(originalRequest);
       } catch (refreshError) {
-        console.error("Refresh failed:", refreshError);
         window.location.href = "/auth/login"; // fallback
         return Promise.reject(refreshError);
       }
