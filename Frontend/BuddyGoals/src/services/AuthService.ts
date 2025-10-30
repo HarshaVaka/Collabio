@@ -23,7 +23,9 @@ export class AuthService {
     await API.post("/auth/logout");
   };
   static fetchUser = async () => {
-    const response = await API.get("/user/getDetails");
+    const response = await API.get("/user/me",{
+      withCredentials: true,
+    });
     return response.data;
   };
   static fetchNewAccessToken = async () => {

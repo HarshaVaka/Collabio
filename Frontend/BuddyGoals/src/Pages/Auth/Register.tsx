@@ -1,9 +1,15 @@
+import { useRegister } from "@/hooks/useUser";
+import { RegisterPayload } from "@/types/Auth.types";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 type RegisterFormInputs = {
+    userName: string;
     email: string;
-    fullName: string;
+    firstName: string;
+    lastName:string;
     password: string;
     confirmPassword: string;
 }
@@ -12,6 +18,7 @@ type Props = {
     onGoogleSignIn?: () => void; // callback for Google sign-in
 };
 export function Register({ onGoogleSignIn }: Props) {
+    const { mutate: registeruser, isError, error } = useRegister();
     const {
         register,
         handleSubmit,
@@ -20,11 +27,39 @@ export function Register({ onGoogleSignIn }: Props) {
     } = useForm<RegisterFormInputs>();
 
     const handleRegister = (formData: RegisterFormInputs) => {
-        console.log(formData);
+        const registerPayload: RegisterPayload = {
+            username: formData.userName,
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            password: formData.password
+        }
+        registeruser(registerPayload);
     }
+       useEffect(() => {
+        if (isError) {
+            toast.error(error.message || "Register failed");
+        }
+    }, [isError, error])
+
     return (
         <div className="space-y-4 max-w-md mx-auto p-6 bg-white rounded-xl ">
             <form onSubmit={handleSubmit(handleRegister)} className="space-y-4">
+                <div>
+                    <label className="block text-sm font-bold text-green-700">Username</label>
+                    <input type="text"
+                        {...register('userName', {
+                            required: 'UserName is required',
+                            minLength: { value: 6, message: 'UserName should have min 6 characters' }
+                        })}
+                        className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
+
+                    />
+                    {
+                        errors.userName &&
+                        <p className="text-red-500 text-sm mt-1">{errors.userName.message}</p>
+                    }
+                </div>
                 <div>
                     <label className="block text-sm font-bold text-green-700">Email</label>
                     <input type="email"
@@ -38,15 +73,27 @@ export function Register({ onGoogleSignIn }: Props) {
                     }
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-green-700">Name</label>
+                    <label className="block text-sm font-bold text-green-700">First Name</label>
                     <input type="text"
-                        {...register('fullName', { required: 'Name is required' })}
+                        {...register('firstName', { required: 'firstName is required' })}
                         className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
 
                     />
                     {
-                        errors.fullName &&
-                        <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                        errors.firstName &&
+                        <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
+                    }
+                </div>
+                 <div>
+                    <label className="block text-sm font-bold text-green-700">Last Name</label>
+                    <input type="text"
+                        {...register('lastName', { required: 'lastName is required' })}
+                        className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
+
+                    />
+                    {
+                        errors.lastName &&
+                        <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
                     }
                 </div>
                 <div>
@@ -107,12 +154,12 @@ export function Register({ onGoogleSignIn }: Props) {
                 />
                 Sign up with Google
             </button>
-             <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4">
                 <Link
                     to="../login"
                     className="text-green-500 hover:text-green-700 underline transition-colors duration-200"
                 >
-                   Already have an account? Sign in
+                    Already have an account? Sign in
                 </Link>
             </div>
         </div>

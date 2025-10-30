@@ -2,9 +2,10 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import { AuthService } from "../services/AuthService";
 import { LoginPayload, RegisterPayload } from "../types/Auth.types";
 import { useNavigate } from "react-router-dom";
+import { UserDetail } from "@/types/User.types";
 
 export const useUser = () => {
-    return useQuery({
+    return useQuery<UserDetail>({
         queryKey: ["user"],
         queryFn: () => AuthService.fetchUser(),
         staleTime: Infinity,
@@ -13,7 +14,7 @@ export const useUser = () => {
 
 export const useLogin = () => {
     const queryClient = new QueryClient();
-     const navigate = useNavigate(); 
+    const navigate = useNavigate();
     return useMutation({
         mutationFn: (payload: LoginPayload) => AuthService.loginUser(payload),
         onSuccess: () => {
@@ -25,10 +26,12 @@ export const useLogin = () => {
 
 export const useRegister = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     return useMutation({
         mutationFn: (payload: RegisterPayload) => AuthService.registerUser(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["user"] });
+            navigate("/");
         },
     });
 };

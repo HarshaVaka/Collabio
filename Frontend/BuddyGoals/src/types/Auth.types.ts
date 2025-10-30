@@ -2,7 +2,8 @@ export type RegisterPayload = {
     username: string,
     password: string,
     email: string,
-    fullName: string
+    firstName: string,
+    lastName:string
 }
 
 
