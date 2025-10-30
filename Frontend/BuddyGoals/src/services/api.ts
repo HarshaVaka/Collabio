@@ -7,7 +7,7 @@ import { AuthService } from "./AuthService";
 const IGNORED_ROUTES = ["/auth/login", "/auth/register"];
 
 export const API = axios.create({
-  baseURL: "https://localhost:5001/api/",
+  baseURL: "http://localhost:5050/api/",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

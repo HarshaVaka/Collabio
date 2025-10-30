@@ -105,6 +105,8 @@ builder.Services.AddCors(options =>
             .AllowCredentials(); // needed for cookies/session
     });
 });
+builder.Environment.EnvironmentName = 
+    Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
 var app = builder.Build();
 
@@ -122,5 +124,6 @@ app.UseCors("AllowFrontend");
 app.UseAuthorization();
 
 app.MapControllers();
-
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}");
 app.Run();
