@@ -89,7 +89,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:5000")
+            .WithOrigins("http://localhost:5173", "http://localhost:5000","https://collabio-ca-project.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials(); // needed for cookies/session
