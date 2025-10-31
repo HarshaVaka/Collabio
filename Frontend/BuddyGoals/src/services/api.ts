@@ -5,9 +5,8 @@ import { setRefreshPromise } from "../store/tokenStore";
 import { AuthService } from "./AuthService";
 
 const IGNORED_ROUTES = ["/auth/login", "/auth/register"];
-
 export const API = axios.create({
-  baseURL: "http://localhost:5050/api/",
+  baseURL: process.env.REACT_APP_API_BASE_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
