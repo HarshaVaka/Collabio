@@ -20,7 +20,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
 
+# Expose internal port
+EXPOSE 5000
+
 # Render passes PORT dynamically (e.g. 10000)
 ENV ASPNETCORE_URLS=http://+:${PORT:-5000}
 
-ENTRYPOINT ["dotnet", "BuddyGoals.dll"]
+# ENTRYPOINT substitutes PORT dynamically at runtime
+ENTRYPOINT ["sh", "-c", "dotnet BuddyGoals.dll --urls http://0.0.0.0:${PORT:-5000}"]

@@ -14,6 +14,7 @@ using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 Log.Logger =  new LoggerConfiguration().WriteTo.Console().WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
     .Enrich.FromLogContext()
@@ -94,17 +95,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials(); // needed for cookies/session
     });
 });
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins("http://localhost:5173", "http://localhost:5000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials(); // needed for cookies/session
-    });
-});
 builder.Environment.EnvironmentName = 
     Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
@@ -119,7 +109,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
 
