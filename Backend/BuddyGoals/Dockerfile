@@ -4,15 +4,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy only the csproj first (better caching)
-COPY Backend/BuddyGoals/*.csproj ./BuddyGoals/
-RUN dotnet restore ./BuddyGoals/BuddyGoals.csproj
+# Copy .csproj
+COPY *.csproj ./
+RUN dotnet restore
 
-# Copy the rest of the source
-COPY Backend/BuddyGoals/. ./BuddyGoals/
+# Copy everything else
+COPY . .
 
-# Publish the app
-WORKDIR /src/BuddyGoals
 RUN dotnet publish -c Release -o /app/out
 
 # -------------------------------
@@ -21,11 +19,7 @@ RUN dotnet publish -c Release -o /app/out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copy published output
 COPY --from=build /app/out ./
 
-# Expose internal port
 EXPOSE 5000
-
-# Run with dynamic port from Render
 ENTRYPOINT ["sh", "-c", "dotnet BuddyGoals.dll --urls http://0.0.0.0:${PORT:-5000}"]
