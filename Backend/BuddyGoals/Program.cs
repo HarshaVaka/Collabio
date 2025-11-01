@@ -86,6 +86,7 @@ builder.Services.AddAuthorization();
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? [
+    "http://localhost:5000",
       "http://localhost:5173"
     ];
 
@@ -105,15 +106,16 @@ builder.Environment.EnvironmentName =
     Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
 var app = builder.Build();
-
+app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionHandler>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 if (!app.Environment.IsProduction())
 {
@@ -121,9 +123,14 @@ if (!app.Environment.IsProduction())
 }
 
 app.UseCors("AllowFrontend");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
+if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Testing"))
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    app.Urls.Clear();
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
 app.Run();
