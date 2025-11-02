@@ -71,6 +71,8 @@ appsettings.json
 
 # Logs
 *.log
+Logs/
+
 
 # =========================
 # Misc
