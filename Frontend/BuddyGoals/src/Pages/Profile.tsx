@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import Edit from "./Edit";
+import Edit from "./Profile/Edit";
 export function Profile() {
   const userDetails = {
     FirstName: "Ralla",
