@@ -11,7 +11,11 @@ export default function EditProfileForm() {
     phoneNumber: string;
     Country: string;
   };
-  const { register, handleSubmit } = useForm<editProfileInputForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<editProfileInputForm>();
   function onSubmit() {
     console.log("Hi");
   }
@@ -23,91 +27,130 @@ export default function EditProfileForm() {
             htmlFor="FirstName"
             className="block text-md font-bold text-green-900"
           >
-            First Name{" "}
+            <span className="text-red-900">*</span>First Name{" "}
           </label>
           <input
-            {...register("FirstName")}
+            {...register("FirstName", { required: "First Name is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.FirstName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.FirstName.message}
+            </p>
+          )}
         </div>
         <div>
           <label
             htmlFor="LastName"
             className="block text-md font-bold text-green-900"
           >
-            Last Name{" "}
+            <span className="text-red-900">*</span>Last Name{" "}
           </label>
           <input
-            {...register("LastName")}
+            {...register("LastName", { required: "Last Name is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.LastName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.LastName.message}
+            </p>
+          )}
         </div>
         <div>
           <label
             htmlFor="Bio"
             className="block text-md font-bold text-green-900"
           >
-            Bio{" "}
+            <span className="text-red-900">*</span>Bio{" "}
           </label>
           <textarea
-            {...register("Bio")}
+            {...register("Bio", { required: "Bio is required" })}
             rows={4}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.Bio && (
+            <p className="text-red-500 text-sm mt-1">{errors.Bio.message}</p>
+          )}
         </div>
         <div>
           <label
             htmlFor="DOB"
             className="block text-md font-bold text-green-900"
           >
-            DOB{" "}
+            <span className="text-red-900">*</span>
+            Date Of Birth{" "}
           </label>
           <input
-            {...register("DOB")}
+            {...register("DOB", { required: "Date of Birth is required." })}
             type="date"
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.DOB && (
+            <p className="text-red-500 text-sm mt-1">{errors.DOB.message}</p>
+          )}
         </div>
         <div>
           <label
             htmlFor="Gender"
             className="block text-md font-bold text-green-900"
           >
+            <span className="text-red-900">*</span>
             Gender{" "}
           </label>
           <select
             id="Gender"
-            {...register("Gender")}
+            {...register("Gender", { required: "Gender is rquired" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           >
             <option value="">Select Option</option>
             <option value="Female">Female</option>
             <option value="Male">Male</option>
           </select>
+          {errors.Gender && (
+            <p className="text-red-500 text-sm mt-1">{errors.Gender.message}</p>
+          )}
         </div>
         <div>
           <label
             htmlFor="phoneNumber"
             className="block text-md font-bold text-green-900"
           >
+            <span className="text-red-900">*</span>
             Phone Number{" "}
           </label>
           <input
-            {...register("phoneNumber")}
+            {...register("phoneNumber", {
+              required: "Phone Number is required",
+              pattern: {
+                value: /^[1-9][0-9]{9}&/,
+                message: "Enter a valid 10 digit phone number",
+              },
+            })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.phoneNumber && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.phoneNumber.message}
+            </p>
+          )}
         </div>
         <div>
           <label
             htmlFor="Country"
             className="block text-md font-bold text-green-900"
           >
+            <span className="text-red-900">*</span>
             Country{" "}
           </label>
           <input
-            {...register("Country")}
+            {...register("Country", { required: "Country is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
+          {errors.Country && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.Country.message}
+            </p>
+          )}
         </div>
         <div className="flex justify-end gap-4 mt-6">
           <button
