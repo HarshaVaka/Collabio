@@ -18,5 +18,6 @@
         public string? ModifiedBy { get; set; }
 
         public User? User { get; set; }
+        public Country? Country { get; set; }
     }
 }
