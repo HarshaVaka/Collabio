@@ -16,8 +16,8 @@ export default function EditProfileForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<editProfileInputForm>();
-  function onSubmit() {
-    console.log("Hi");
+  function onSubmit(formData: editProfileInputForm) {
+    console.log(formData);
   }
   return (
     <div className="max-h-[80vh] overflow-y-auto">
@@ -122,7 +122,7 @@ export default function EditProfileForm() {
             {...register("phoneNumber", {
               required: "Phone Number is required",
               pattern: {
-                value: /^[1-9][0-9]{9}&/,
+                value: /^[1-9][0-9]{9}$/,
                 message: "Enter a valid 10 digit phone number",
               },
             })}
