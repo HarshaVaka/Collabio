@@ -13,6 +13,6 @@
         //Navigation
         public ICollection<UserRoleMapping> UserRoles { get; set; } = [];
         public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
-        public UserProfile? Profile { get; set; }
+        public required UserProfile Profile { get; set; }
     }
 }
