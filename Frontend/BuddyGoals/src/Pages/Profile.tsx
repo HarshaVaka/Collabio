@@ -1,4 +1,4 @@
-import profilePic from "../assets/profilePic1.jfif";
+
 import { useState } from "react";
 import Edit from "./Edit";
 export function Profile() {
@@ -14,6 +14,7 @@ export function Profile() {
     Gender: "Female",
   };
   const [isOpen, setOpen] = useState(false);
+  const profilePic = "https://media.craiyon.com/2025-07-12/_4dZ32QVTBSVcgD5FEQ6yg.webp"
   return (
     <>
       <div className="text-teal-900 font-bold">My Profile</div>
