@@ -25,6 +25,7 @@ builder.Host.UseSerilog();
 
 //Mapper
 builder.Services.AddAutoMapper(typeof(AuthMappingProfile));
+builder.Services.AddAutoMapper(typeof(UserProfileMappingProfile));
 
 //passwordHasher
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -45,7 +46,8 @@ builder.Services.AddDbContext<BuddyGoalsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
