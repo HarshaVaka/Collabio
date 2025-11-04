@@ -2,14 +2,23 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/re
 import { AuthService } from "../services/AuthService";
 import { LoginPayload, RegisterPayload } from "../types/Auth.types";
 import { useNavigate } from "react-router-dom";
-import { UserDetail } from "@/types/User.types";
+import { UserDetail, UserProfile } from "@/types/User.types";
+import { UserService } from "@/services/UserService";
 
 export const useUser = () => {
     return useQuery<UserDetail>({
         queryKey: ["user"],
-        queryFn: () => AuthService.fetchUser(),
+        queryFn: () => UserService.fetchUser(),
         staleTime: Infinity,
     });
+}
+
+export const useUserProfile =()=>{
+    return useQuery<UserProfile>({
+         queryKey: ["userProfile"],
+        queryFn: () => UserService.fetchUserProfile(),
+        staleTime: Infinity,
+    })
 }
 
 export const useLogin = () => {

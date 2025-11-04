@@ -22,7 +22,7 @@
     "paths": {
       "@/*": ["*"]
     },
-
+    "types": ["vite/client"],
     // ✅ Needed when using moduleResolution=bundler
     "resolveJsonModule": true,
     "noEmit": true
