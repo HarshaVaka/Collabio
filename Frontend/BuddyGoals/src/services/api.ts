@@ -5,11 +5,9 @@ import { setRefreshPromise } from "../store/tokenStore";
 import { AuthService } from "./AuthService";
 
 const IGNORED_ROUTES = ["/auth/login", "/auth/register"];
-console.log((import.meta as any).env);
-const BASEURL = ((import.meta as any)?.env?.VITE_API_URL);
+const BASEURL = import.meta.env.VITE_API_URL;
 export const API = axios.create({
   baseURL: BASEURL,
-  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },

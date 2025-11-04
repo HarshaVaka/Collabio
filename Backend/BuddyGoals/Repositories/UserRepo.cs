@@ -69,7 +69,7 @@ namespace BuddyGoals.Repositories
                 {
                     UserName = u.UserName,
                     Email = u.Email,
-                    ProfilePicUrl = "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/user-profile-icon.png",
+                    ProfilePicUrl = "https://media.craiyon.com/2025-07-12/_4dZ32QVTBSVcgD5FEQ6yg.webp",
                     FirstName = u.Profile.FirstName, 
                     LastName = u.Profile.LastName,
                     Bio = u.Profile.Bio,
