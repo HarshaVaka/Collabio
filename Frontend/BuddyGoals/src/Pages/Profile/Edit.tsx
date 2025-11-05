@@ -15,7 +15,7 @@ export default function Edit({ open, onOpenChange,profileDetails }: { open: bool
           <Dialog.Title className="text-2xl font-bold pb-8 text-green-900">
             Edit Profile
           </Dialog.Title>
-          <EditProfileForm profileDetails ={profileDetails}/>
+          <EditProfileForm profileDetails ={profileDetails} onOpenChange={onOpenChange} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

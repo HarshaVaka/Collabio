@@ -48,7 +48,7 @@ namespace BuddyGoals.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             _logger.LogInformation("Updating profile of user: {UserId}", userId);
             var result = await _userService.UpdateUserProfileDetails(Guid.Parse(userId), patchDoc);
-            return Ok(result);
+            return Ok("Profile updated successfully!!");
         }
     }
 }
