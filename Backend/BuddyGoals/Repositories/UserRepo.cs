@@ -64,6 +64,7 @@ namespace BuddyGoals.Repositories
         {
             var userProfileDetails =  await _dbContext.Users
                 .Include(u => u.Profile)
+                .ThenInclude(p => p.Country)
                 .Where(u => u.UserName == username)
                 .Select(u => new UserProfileDto
                 {
@@ -74,9 +75,9 @@ namespace BuddyGoals.Repositories
                     LastName = u.Profile.LastName,
                     Bio = u.Profile.Bio,
                     DOB = u.Profile.DOB,
-                    Country = u.Profile.CountryCode,
-                    PhoneNo = u.Profile.PhoneNo,
-                    Gender = u.Profile.Gender
+                    Country = u.Profile!=null &&  u.Profile.Country!=null ? u.Profile.Country.CountryName:null,
+                    PhoneNo = u.Profile!=null ? u.Profile.PhoneNo:"",
+                    Gender = u.Profile!=null ? u.Profile.Gender:null
                 }).FirstOrDefaultAsync();
             return userProfileDetails;
         }

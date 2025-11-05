@@ -1,24 +1,60 @@
 import { useForm } from "react-hook-form";
 import * as Dialog from "@radix-ui/react-dialog";
+import { PatchFormType, UserProfile } from "@/types/User.types";
+import { useEffect } from "react";
+import { useUpdateProfile } from "@/hooks/useUser";
 
-export default function EditProfileForm() {
+export default function EditProfileForm({
+  profileDetails,
+}: {
+  profileDetails: UserProfile;
+}) {
   type editProfileInputForm = {
-    FirstName: string;
-    LastName: string;
-    Bio: string;
-    DOB: Date;
-    Gender: string;
-    phoneNumber: string;
-    Country: string;
+    firstName: string;
+    lastName: string;
+    bio: string;
+    dOB: Date;
+    gender: string;
+    phoneNo: string;
+    country: string;
   };
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<editProfileInputForm>();
+    reset,
+    formState: { errors, dirtyFields },
+  } = useForm<editProfileInputForm>({
+    mode: "onChange",
+  });
+
+  const { mutate: updateProfile, isError, error,isSuccess } = useUpdateProfile();
+
   function onSubmit(formData: editProfileInputForm) {
-    console.log(formData);
+    let editedData: PatchFormType = [];
+    Object.keys(formData).forEach((key) => {
+      const fieldKey = key as keyof editProfileInputForm;
+      if (dirtyFields[fieldKey]) {
+        editedData.push({
+          path: `/${fieldKey}`,
+          op: "replace",
+          value: formData[fieldKey],
+        });
+      }
+    });
+    console.log("Edited Data:", editedData);
+    updateProfile(editedData);
   }
+  useEffect(() => {
+    reset({
+      firstName: profileDetails.firstName,
+      lastName: profileDetails.lastName,
+      bio: profileDetails.bio,
+      dOB: profileDetails.dOB,
+      gender: profileDetails.gender,
+      phoneNo: profileDetails.phoneNo,
+      country: profileDetails.country,
+    });
+  }, [profileDetails]);
   return (
     <div className="max-h-[80vh] overflow-y-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 m-4">
@@ -30,12 +66,12 @@ export default function EditProfileForm() {
             <span className="text-red-900">*</span>First Name{" "}
           </label>
           <input
-            {...register("FirstName", { required: "First Name is required" })}
+            {...register("firstName", { required: "First Name is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.FirstName && (
+          {errors.firstName && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.FirstName.message}
+              {errors.firstName.message}
             </p>
           )}
         </div>
@@ -47,12 +83,12 @@ export default function EditProfileForm() {
             <span className="text-red-900">*</span>Last Name{" "}
           </label>
           <input
-            {...register("LastName", { required: "Last Name is required" })}
+            {...register("lastName", { required: "Last Name is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.LastName && (
+          {errors.lastName && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.LastName.message}
+              {errors.lastName.message}
             </p>
           )}
         </div>
@@ -64,12 +100,12 @@ export default function EditProfileForm() {
             <span className="text-red-900">*</span>Bio{" "}
           </label>
           <textarea
-            {...register("Bio", { required: "Bio is required" })}
+            {...register("bio", { required: "Bio is required" })}
             rows={4}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.Bio && (
-            <p className="text-red-500 text-sm mt-1">{errors.Bio.message}</p>
+          {errors.bio && (
+            <p className="text-red-500 text-sm mt-1">{errors.bio.message}</p>
           )}
         </div>
         <div>
@@ -81,12 +117,12 @@ export default function EditProfileForm() {
             Date Of Birth{" "}
           </label>
           <input
-            {...register("DOB", { required: "Date of Birth is required." })}
+            {...register("dOB", { required: "Date of Birth is required." })}
             type="date"
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.DOB && (
-            <p className="text-red-500 text-sm mt-1">{errors.DOB.message}</p>
+          {errors.dOB && (
+            <p className="text-red-500 text-sm mt-1">{errors.dOB.message}</p>
           )}
         </div>
         <div>
@@ -99,15 +135,15 @@ export default function EditProfileForm() {
           </label>
           <select
             id="Gender"
-            {...register("Gender", { required: "Gender is rquired" })}
+            {...register("gender", { required: "Gender is rquired" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           >
             <option value="">Select Option</option>
             <option value="Female">Female</option>
             <option value="Male">Male</option>
           </select>
-          {errors.Gender && (
-            <p className="text-red-500 text-sm mt-1">{errors.Gender.message}</p>
+          {errors.gender && (
+            <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>
           )}
         </div>
         <div>
@@ -119,7 +155,7 @@ export default function EditProfileForm() {
             Phone Number{" "}
           </label>
           <input
-            {...register("phoneNumber", {
+            {...register("phoneNo", {
               required: "Phone Number is required",
               pattern: {
                 value: /^[1-9][0-9]{9}$/,
@@ -128,9 +164,9 @@ export default function EditProfileForm() {
             })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.phoneNumber && (
+          {errors.phoneNo && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.phoneNumber.message}
+              {errors.phoneNo.message}
             </p>
           )}
         </div>
@@ -143,12 +179,12 @@ export default function EditProfileForm() {
             Country{" "}
           </label>
           <input
-            {...register("Country", { required: "Country is required" })}
+            {...register("country", { required: "Country is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.Country && (
+          {errors.country && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.Country.message}
+              {errors.country.message}
             </p>
           )}
         </div>

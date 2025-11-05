@@ -16,7 +16,6 @@
         public string? CreatedBy { get; set; }
         public DateTime ModifiedAt { get; set; }
         public string? ModifiedBy { get; set; }
-
         public User? User { get; set; }
         public Country? Country { get; set; }
     }
