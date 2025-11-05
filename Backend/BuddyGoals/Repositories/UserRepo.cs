@@ -75,6 +75,7 @@ namespace BuddyGoals.Repositories
                     LastName = u.Profile.LastName,
                     Bio = u.Profile.Bio,
                     DOB = u.Profile.DOB,
+                    CountryCode = u.Profile != null && u.Profile.Country != null ? u.Profile.Country.CountryCode : null,
                     Country = u.Profile!=null &&  u.Profile.Country!=null ? u.Profile.Country.CountryName:null,
                     PhoneNo = u.Profile!=null ? u.Profile.PhoneNo:"",
                     Gender = u.Profile!=null ? u.Profile.Gender:null

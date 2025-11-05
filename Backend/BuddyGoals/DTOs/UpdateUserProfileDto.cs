@@ -8,6 +8,6 @@
         public DateOnly? DOB { get; set; }
         public string? Gender { get; set; }
         public string? PhoneNo { get;set; }
-        public string? Country { get; set; }
+        public string? CountryCode { get; set; }
     }
 }

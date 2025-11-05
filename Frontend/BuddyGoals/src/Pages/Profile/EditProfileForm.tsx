@@ -1,22 +1,24 @@
 import { useForm } from "react-hook-form";
-import * as Dialog from "@radix-ui/react-dialog";
-import { PatchFormType, UserProfile } from "@/types/User.types";
+import { UserProfile } from "@/types/User.types";
 import { useEffect } from "react";
 import { useUpdateProfile } from "@/hooks/useUser";
+import { PatchFormType } from "@/types/global.types";
 
 export default function EditProfileForm({
   profileDetails,
+  onOpenChange
 }: {
-  profileDetails: UserProfile;
+  profileDetails: UserProfile,
+  onOpenChange: (open: boolean) => void
 }) {
   type editProfileInputForm = {
     firstName: string;
     lastName: string;
     bio: string;
-    dOB: Date;
+    dob: Date;
     gender: string;
     phoneNo: string;
-    country: string;
+    countryCode: string;
   };
   const {
     register,
@@ -27,10 +29,10 @@ export default function EditProfileForm({
     mode: "onChange",
   });
 
-  const { mutate: updateProfile, isError, error,isSuccess } = useUpdateProfile();
+  const { mutate: updateProfile } = useUpdateProfile();
 
   function onSubmit(formData: editProfileInputForm) {
-    let editedData: PatchFormType = [];
+    const editedData: PatchFormType = [];
     Object.keys(formData).forEach((key) => {
       const fieldKey = key as keyof editProfileInputForm;
       if (dirtyFields[fieldKey]) {
@@ -41,20 +43,23 @@ export default function EditProfileForm({
         });
       }
     });
-    console.log("Edited Data:", editedData);
-    updateProfile(editedData);
+    updateProfile(editedData, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   }
   useEffect(() => {
     reset({
       firstName: profileDetails.firstName,
       lastName: profileDetails.lastName,
       bio: profileDetails.bio,
-      dOB: profileDetails.dOB,
+      dob: profileDetails.dob,
       gender: profileDetails.gender,
       phoneNo: profileDetails.phoneNo,
-      country: profileDetails.country,
+      countryCode: profileDetails.countryCode,
     });
-  }, [profileDetails]);
+  }, [profileDetails, reset]);
   return (
     <div className="max-h-[80vh] overflow-y-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 m-4">
@@ -117,12 +122,12 @@ export default function EditProfileForm({
             Date Of Birth{" "}
           </label>
           <input
-            {...register("dOB", { required: "Date of Birth is required." })}
+            {...register("dob", { required: "Date of Birth is required." })}
             type="date"
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.dOB && (
-            <p className="text-red-500 text-sm mt-1">{errors.dOB.message}</p>
+          {errors.dob && (
+            <p className="text-red-500 text-sm mt-1">{errors.dob.message}</p>
           )}
         </div>
         <div>
@@ -179,12 +184,12 @@ export default function EditProfileForm({
             Country{" "}
           </label>
           <input
-            {...register("country", { required: "Country is required" })}
+            {...register("countryCode", { required: "Country is required" })}
             className="mt-1 block w-full border border-emerald-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-lime-500"
           />
-          {errors.country && (
+          {errors.countryCode && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.country.message}
+              {errors.countryCode.message}
             </p>
           )}
         </div>
@@ -198,16 +203,17 @@ export default function EditProfileForm({
           >
             Save
           </button>
-          <Dialog.Close asChild>
-            <button
-              className=" bg-gradient-to-br from-emerald-100 to-green-200
+
+          <button
+            className=" bg-gradient-to-br from-emerald-100 to-green-200
                            hover:from-emerald-400 hover:to-lime-100
                            text-green-900 font-semibold py-2 px-4 rounded-md cursor-pointer 
                            transition-all duration-200"
-            >
-              Close
-            </button>
-          </Dialog.Close>
+            onClick={() => onOpenChange(false)}
+          >
+            Close
+          </button>
+
         </div>
       </form>
     </div>

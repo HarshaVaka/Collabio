@@ -77,10 +77,10 @@ export function Profile() {
               <p className="text-green-500">{profileDetails.lastName}</p>
             </div>
             <div>
-              <label htmlFor="DOB" className="text-teal-600 font-semibold">
+              <label htmlFor="dob" className="text-teal-600 font-semibold">
                 Date of Birth:{" "}
               </label>
-              <p className="text-green-500">{profileDetails.dOB?.toLocaleString()}</p>
+              <p className="text-green-500">{profileDetails.dob?.toLocaleString()}</p>
             </div>
             <div>
               <label htmlFor="Gender" className="text-teal-600 font-semibold">
