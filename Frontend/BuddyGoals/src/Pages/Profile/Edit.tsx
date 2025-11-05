@@ -1,8 +1,9 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import EditProfileForm from "./EditProfileForm";
+import { UserProfile } from "@/types/User.types";
 
-export default function Edit({ open, onOpenChange }) {
+export default function Edit({ open, onOpenChange,profileDetails }: { open: boolean; onOpenChange: (open: boolean) => void; profileDetails:UserProfile }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -14,7 +15,7 @@ export default function Edit({ open, onOpenChange }) {
           <Dialog.Title className="text-2xl font-bold pb-8 text-green-900">
             Edit Profile
           </Dialog.Title>
-          <EditProfileForm />
+          <EditProfileForm profileDetails ={profileDetails} onOpenChange={onOpenChange} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

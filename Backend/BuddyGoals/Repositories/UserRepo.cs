@@ -1,4 +1,5 @@
-﻿using BuddyGoals.Data;
+﻿using AutoMapper;
+using BuddyGoals.Data;
 using BuddyGoals.DTOs;
 using BuddyGoals.Entities;
 using BuddyGoals.Repositories.IRepositories;
@@ -25,7 +26,7 @@ namespace BuddyGoals.Repositories
             return profile;
         }
 
-        public async Task<UserDetailsDto> GetUserDetailsAsync(string username)
+        public async Task<UserDetailsDto?> GetUserDetailsAsync(string username)
         {
             var userDetails = await _dbContext.Users.Include(u => u.Profile)
                 .Where(u => u.UserName == username)
@@ -33,8 +34,8 @@ namespace BuddyGoals.Repositories
                     UserName = u.UserName,
                     Email = u.Email,
                     ProfilePicUrl= "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/user-profile-icon.png"
-                }).ToListAsync();
-            return userDetails[0];
+                }).FirstOrDefaultAsync();
+            return userDetails;
         }
 
         public async Task<User?> GetUserByUserIdAsync(Guid userId)
@@ -58,6 +59,41 @@ namespace BuddyGoals.Repositories
                 .Include(urm => urm.UserRoles)
                 .ThenInclude(r => r.Role)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+        public async Task<UserProfileDto?> GetUserProfileAsync(string username)
+        {
+            var userProfileDetails =  await _dbContext.Users
+                .Include(u => u.Profile)
+                .ThenInclude(p => p.Country)
+                .Where(u => u.UserName == username)
+                .Select(u => new UserProfileDto
+                {
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    ProfilePicUrl = "https://media.craiyon.com/2025-07-12/_4dZ32QVTBSVcgD5FEQ6yg.webp",
+                    FirstName = u.Profile.FirstName, 
+                    LastName = u.Profile.LastName,
+                    Bio = u.Profile.Bio,
+                    DOB = u.Profile.DOB,
+                    CountryCode = u.Profile != null && u.Profile.Country != null ? u.Profile.Country.CountryCode : null,
+                    Country = u.Profile!=null &&  u.Profile.Country!=null ? u.Profile.Country.CountryName:null,
+                    PhoneNo = u.Profile!=null ? u.Profile.PhoneNo:"",
+                    Gender = u.Profile!=null ? u.Profile.Gender:null
+                }).FirstOrDefaultAsync();
+            return userProfileDetails;
+        }
+        public async Task<UserProfile?> GetUserProfileByUserIDAsync(Guid userId)
+        {
+            var userProfile = await _dbContext.UserProfiles
+                .Where(u => u.UserId == userId)
+                .FirstOrDefaultAsync();
+            return userProfile;
+        }
+        public async Task<int> UpdateProfileAsync(UserProfile userProfile)
+        {
+            _dbContext.UserProfiles.Update(userProfile);
+            await _dbContext.SaveChangesAsync();
+            return 1;
         }
     }
 }

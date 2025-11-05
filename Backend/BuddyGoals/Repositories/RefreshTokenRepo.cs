@@ -3,7 +3,7 @@ using BuddyGoals.Entities;
 using BuddyGoals.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace AuthMicroService.Repositories
+namespace BuddyGoals.Repositories
 {
     public class RefreshTokenRepo(BuddyGoalsDbContext dbContext) : IRefreshTokenRepo
     {

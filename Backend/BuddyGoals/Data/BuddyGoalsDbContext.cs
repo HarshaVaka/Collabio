@@ -10,6 +10,7 @@ namespace BuddyGoals.Data
         public DbSet<UserRoleMapping> UserRoles { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,6 +62,16 @@ namespace BuddyGoals.Data
 
                 entity.HasIndex(rt => rt.UserId);
             });
+
+            modelBuilder.Entity<Country>()
+                .HasKey(c => c.CountryCode);
+
+            modelBuilder.Entity<UserProfile>()
+                .HasOne(up => up.Country)
+                .WithMany(c => c.UserProfiles)
+                .HasForeignKey(up => up.CountryCode)
+                .HasPrincipalKey(c => c.CountryCode)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
