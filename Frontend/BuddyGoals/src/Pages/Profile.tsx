@@ -59,7 +59,7 @@ export function Profile() {
             Edit
           </button>
         </div>
-        <Edit open={isOpen} onOpenChange={setOpen} />
+        <Edit open={isOpen} onOpenChange={setOpen} profileDetails={profileDetails}/>
 
         <hr className="border-t-1 border-teal-500 my-4" />
         {profileDetails && (
