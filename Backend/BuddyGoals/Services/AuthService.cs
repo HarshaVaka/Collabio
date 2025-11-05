@@ -155,11 +155,7 @@ namespace BuddyGoals.Services
             {
                 throw new ApiException("Invalid Refresh Token", StatusCodes.Status400BadRequest);
             }
-            var user = await _authRepo.GetUserByUserIdAsync(existingRefreshToken.UserId);
-            if (user == null)
-            {
-                throw new ApiException("User Not Found", StatusCodes.Status404NotFound);
-            }
+            var user = await _authRepo.GetUserByUserIdAsync(existingRefreshToken.UserId) ?? throw new ApiException("User Not Found", StatusCodes.Status404NotFound);
             //generate new refresh token and access token
             var newAccessToken = _jwtService.GenerateAccessToken(_mapper.Map<GenerateAccessTokenDto>(user));
             var newRefreshToken = _jwtService.GenerateRefreshToken(ipAddress);

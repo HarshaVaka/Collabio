@@ -1,4 +1,3 @@
-using AuthMicroService.Repositories;
 using BuddyGoals;
 using BuddyGoals.Data;
 using BuddyGoals.Mappings;
@@ -12,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -104,6 +105,42 @@ builder.Services.AddCors(options =>
             .AllowCredentials(); // needed for cookies/session
     });
 });
+builder.Services.AddMemoryCache();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
+
+// Register both so DI can create either
+builder.Services.AddScoped<MemoryCacheService>();
+builder.Services.AddScoped<RedisCacheService>();
+
+builder.Services.AddScoped<ICacheService>(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var useRedis = config.GetValue<bool>("CacheSettings:UseRedis");
+
+    if (useRedis)
+    {
+        try
+        {
+            // Try initializing Redis
+            var redis = sp.GetRequiredService<RedisCacheService>();
+            // Optional: test connection here if needed
+            return redis;
+        }
+        catch (Exception ex)
+        {
+            var logger = sp.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning(ex, "Redis unavailable, falling back to memory cache");
+            return sp.GetRequiredService<MemoryCacheService>();
+        }
+    }
+
+    return sp.GetRequiredService<MemoryCacheService>();
+});
+
+
 builder.Environment.EnvironmentName = 
     Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
