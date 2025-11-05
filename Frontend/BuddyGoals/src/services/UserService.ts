@@ -1,4 +1,4 @@
-import { PatchFormType } from "@/types/User.types";
+import { PatchFormType } from "@/types/global.types";
 import { API } from "./api";
 
 export class UserService {
