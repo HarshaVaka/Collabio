@@ -13,8 +13,8 @@ import { Community } from './Pages/Community';
 import { Settings } from './Pages/Settings';
 import { Chat } from './Pages/Chat';
 import { MainLayout } from './Components/MainLayout';
-import { Todo } from './Pages/Todo';
-import { TodoItem } from './Pages/Todo/TodoItem';
+import Todo from  './Pages/Todo';
+import { TodoDetail } from './Pages/Todo/TodoDetail';
 import { ProtectedRoute } from './Components/ProtectedRoute';
 
 
@@ -42,9 +42,9 @@ function App() {
                 <Route path="community" element={<Community />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="chats" element={<Chat />} />
-                <Route path="profile/:userName" element={<Profile />} />
-                <Route path="todo" element={<Todo />} >
-                  <Route path=":id" element={<TodoItem />} />
+                              <Route path="profile/:userName" element={<Profile />} />
+                <Route path="todo" element={<Todo />}>
+                  <Route path=":id" element={<TodoDetail/>} />
                 </Route>
               </Route>
             </Route>
