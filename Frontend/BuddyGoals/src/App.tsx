@@ -42,7 +42,7 @@ function App() {
                 <Route path="community" element={<Community />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="chats" element={<Chat />} />
-                              <Route path="profile/:userName" element={<Profile />} />
+                <Route path="profile/:userName" element={<Profile />} />
                 <Route path="todo" element={<Todo />}>
                   <Route path=":id" element={<TodoDetail/>} />
                 </Route>
