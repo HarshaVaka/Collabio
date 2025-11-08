@@ -37,10 +37,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMasterService, MasterService>();
 
 //Repo Layer
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
+builder.Services.AddScoped<IMasterRepo, MasterRepo>();
 
 //  Add DbContext
 builder.Services.AddDbContext<BuddyGoalsDbContext>(options =>
