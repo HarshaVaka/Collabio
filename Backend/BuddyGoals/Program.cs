@@ -1,5 +1,6 @@
 using BuddyGoals;
 using BuddyGoals.Data;
+using BuddyGoals.Data.Seed;
 using BuddyGoals.Mappings;
 using BuddyGoals.Repositories;
 using BuddyGoals.Repositories.IRepositories;
@@ -8,10 +9,11 @@ using BuddyGoals.Services.IServices;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System;
 using System.Text;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -171,5 +173,11 @@ if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Testing"))
     var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
     app.Urls.Clear();
     app.Urls.Add($"http://0.0.0.0:{port}");
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BuddyGoalsDbContext>();
+    DbSeeder.Seed(context);
 }
 app.Run();

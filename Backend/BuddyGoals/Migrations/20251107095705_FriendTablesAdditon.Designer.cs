@@ -3,6 +3,7 @@ using System;
 using BuddyGoals.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuddyGoals.Migrations
 {
     [DbContext(typeof(BuddyGoalsDbContext))]
-    partial class BuddyGoalsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251107095705_FriendTablesAdditon")]
+    partial class FriendTablesAdditon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
