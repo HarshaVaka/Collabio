@@ -39,10 +39,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 
 //Repo Layer
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
+builder.Services.AddScoped<IFriendRepo, FriendRepo>();
 
 //  Add DbContext
 builder.Services.AddDbContext<BuddyGoalsDbContext>(options =>
@@ -175,9 +177,9 @@ if (app.Environment.IsProduction() || app.Environment.IsEnvironment("Testing"))
     app.Urls.Add($"http://0.0.0.0:{port}");
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<BuddyGoalsDbContext>();
-    DbSeeder.Seed(context);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<BuddyGoalsDbContext>();
+//    DbSeeder.Seed(context);
+//}
 app.Run();

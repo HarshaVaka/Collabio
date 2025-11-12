@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BuddyGoals.DTOs;
 using BuddyGoals.Exceptions;
+using BuddyGoals.Repositories;
 using BuddyGoals.Repositories.IRepositories;
 using BuddyGoals.Services.IServices;
 using Microsoft.AspNetCore.JsonPatch;
@@ -43,5 +44,11 @@ namespace BuddyGoals.Services
             await _userRepo.UpdateProfileAsync(profileEntity);
             return 1;
         }
+
+        public async Task<List<FriendListDto>> GetUsersListBySearchTerm(string searchFriendParam)
+        {
+            return await _userRepo.GetUsersListBySearchTerm(searchFriendParam);
+        }
+
     }
 }
