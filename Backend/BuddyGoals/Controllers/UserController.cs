@@ -1,5 +1,4 @@
-﻿
-using BuddyGoals.DTOs;
+﻿using BuddyGoals.DTOs;
 using BuddyGoals.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -47,8 +46,22 @@ namespace BuddyGoals.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             _logger.LogInformation("Updating profile of user: {UserId}", userId);
-            var result = await _userService.UpdateUserProfileDetails(Guid.Parse(userId), patchDoc);
+            var _ = await _userService.UpdateUserProfileDetails(Guid.Parse(userId), patchDoc);
             return Ok("Profile updated successfully!!");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("UsersListBySearchTerm")]
+        public async Task<IActionResult> GetUsersListBySearchTerm([FromQuery] string searchTerm)
+        {
+            var userName = User.FindFirstValue(ClaimTypes.Name) ?? "";
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            _logger.LogInformation("Fetching list of users with search term {searchFriendParam} by user {userName}", searchTerm, userName);
+            var friendList = await _userService.GetUsersListBySearchTerm(Guid.Parse(userId), searchTerm);
+
+            return Ok(friendList);
+
         }
     }
 }

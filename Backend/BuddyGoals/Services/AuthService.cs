@@ -8,8 +8,6 @@ using BuddyGoals.Services.IServices;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
-using StackExchange.Redis;
 
 namespace BuddyGoals.Services
 {

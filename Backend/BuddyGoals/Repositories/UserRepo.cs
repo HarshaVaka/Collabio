@@ -95,5 +95,37 @@ namespace BuddyGoals.Repositories
             await _dbContext.SaveChangesAsync();
             return 1;
         }
+
+        public async Task<List<SearchUserDto>> GetUsersListBySearchTerm(Guid userId, string searchTerm)
+        {
+            var myFriendIds = await _dbContext.Friends
+                .Where(f => f.UserId == userId)
+                .Select(f => f.FriendId)
+                .ToListAsync();
+
+            var param = searchTerm.ToLower();
+
+            var usersList = await _dbContext.Users
+                .Include(u => u.Profile)
+                .Where(u =>
+                    u.UserName.ToLower().Contains(param) ||
+                    (u.Profile != null && u.Profile.FirstName.ToLower().Contains(param)) ||
+                    (u.Profile != null && u.Profile.LastName.ToLower().Contains(param))
+                )
+                .Select(u => new SearchUserDto
+                {
+                    UserName = u.UserName,
+                    FirstName = u.Profile.FirstName ?? "",
+                    LastName = u.Profile.LastName ?? "",
+                    ImageUrl = u.Profile.ProfileUrl,
+                    MutualCount = _dbContext.Friends
+                        .Count(f => f.UserId == u.UserId && myFriendIds.Contains(f.FriendId))
+                })
+                .Take(30)
+                .ToListAsync();
+
+            return usersList;
+        }
+
     }
 }

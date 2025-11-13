@@ -43,5 +43,11 @@ namespace BuddyGoals.Services
             await _userRepo.UpdateProfileAsync(profileEntity);
             return 1;
         }
+
+        public async Task<List<SearchUserDto>> GetUsersListBySearchTerm(Guid userId,string searchTerm)
+        {
+            return await _userRepo.GetUsersListBySearchTerm(userId, searchTerm);
+        }
+
     }
 }
