@@ -7,9 +7,10 @@ namespace BuddyGoals.Repositories.IRepositories
     {
         Task<int> AddFriend(FriendRequest friendReqDetails);
         Task<List<PendingRequestsDto>> GetPendingFriendRequests(Guid userId);
-        Task<User> GetUserFromRequestId(Guid requestId);
-        Task<int> UpdateApproveRejectRequest(ApproveRejectRequestDto requestData);
-        Task<int> CheckFriendRequestStatus(FriendRequestDto friendRequestData, Guid userId);
-        Task<List<FriendListDto>> GetFriendsList(Guid userId);
+        Task<FriendRequest?> GetFriendRequestDataFromRequestId(Guid requestId);
+        Task<Enums.FriendRequestStatus?> GetFriendStatus(Guid senderId,Guid RecieverId);
+        Task<List<FriendDataDto>> GetFriendsList(Guid userId);
+        Task CreateFriendship(Guid userId, Guid friendId);
+        Task UpdateFriendRequestStatus(FriendRequest request);
     }
 }

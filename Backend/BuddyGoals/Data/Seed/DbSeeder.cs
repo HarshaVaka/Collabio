@@ -6,6 +6,8 @@ namespace BuddyGoals.Data.Seed
 {
     public static class DbSeeder
     {
+        private static readonly string[] items = ["Male", "Female", "Other"];
+
         public static void Seed(BuddyGoalsDbContext context)
         {
             var existingUserCount = context.Users.Count();
@@ -36,7 +38,7 @@ namespace BuddyGoals.Data.Seed
                     LastName = f.Name.LastName(),
                     PhoneNo = f.Phone.PhoneNumber("+91##########"),
                     CountryCode = f.Address.CountryCode(),
-                    Gender = f.PickRandom(new[] { "Male", "Female", "Other" }),
+                    Gender = f.PickRandom(items),
                     Bio = f.Lorem.Sentence(6),
                     DOB = DateOnly.FromDateTime(f.Date.Past(30, DateTime.Now.AddYears(-18)).ToUniversalTime()),
                     ProfileUrl = f.Internet.Avatar(),

@@ -14,7 +14,7 @@ namespace BuddyGoals.Repositories.IRepositories
         Task<UserProfileDto?> GetUserProfileAsync(string username);
         Task<UserProfile?> GetUserProfileByUserIDAsync(Guid userId);
         Task<int> UpdateProfileAsync(UserProfile userProfile);
-        Task<List<FriendListDto>> GetUsersListBySearchTerm(string searchFriendParam);
+        Task<List<SearchUserDto>> GetUsersListBySearchTerm(Guid userId,string searchTerm);
 
     }
 }

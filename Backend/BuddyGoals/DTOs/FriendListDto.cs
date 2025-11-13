@@ -1,11 +1,19 @@
 ﻿namespace BuddyGoals.DTOs
 {
-    public class FriendListDto
+    public class SearchUserDto
     {
-        public required string userName { get; set; }
+        public required string UserName { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
+        public  string? ImageUrl {  get; set; }
+        public int MutualCount { get; set; }
+    }
 
-        public required string Bio {  get; set; }
+   public class FriendDataDto
+    {
+        public required string UserName { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

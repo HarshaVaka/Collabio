@@ -1,4 +1,5 @@
 ﻿using BuddyGoals.DTOs;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BuddyGoals.Services.IServices
 {
@@ -6,7 +7,7 @@ namespace BuddyGoals.Services.IServices
     {
         Task<int> AddFriend(FriendRequestDto friendRequestData, Guid userId);
         Task<List<PendingRequestsDto>> GetPendingFriendRequests(Guid userId);
-        Task<int> UpdateApproveRejectRequest(Guid userId, ApproveRejectRequestDto requestData);
-        Task<List<FriendListDto>> GetFriendsList(Guid userId);
+        Task<int> UpdateApproveRejectRequest(Guid userId,Guid requestId,JsonPatchDocument<ApproveRejectRequestDto> requestData);
+        Task<List<FriendDataDto>> GetFriendsList(Guid userId);
     }
 }

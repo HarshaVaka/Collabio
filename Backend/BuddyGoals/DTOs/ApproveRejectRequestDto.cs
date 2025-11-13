@@ -2,7 +2,6 @@
 {
     public class ApproveRejectRequestDto
     {
-        public required Guid RequestId { get; set; }
-        public required int Status { get;set; }
+        public required Enums.FriendRequestStatus Status { get;set; }
     }
 }

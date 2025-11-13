@@ -22,104 +22,71 @@ namespace BuddyGoals.Repositories
         public async Task<List<PendingRequestsDto>> GetPendingFriendRequests( Guid userId)
         {
             var pendingRequestList = await _dbContext.FriendRequests
-                                     .Include(u => u.Receiver)
-                                     .Where(r => r.ReceiverId == userId)
+                                     .Include(r => r.Sender)
+                                     .ThenInclude(u => u.Profile)
+                                     .Where(r => r.ReceiverId == userId && r.Status==Enums.FriendRequestStatus.Pending)
                                      .Select(u => new PendingRequestsDto()
                                      {
-                                         Receiver = u.Receiver.UserName,
-                                         Status = u.Status
+                                         RequestId = u.RequestId,
+                                         SenderId = u.SenderId,
+                                         SenderUserName = u.Sender.UserName,
+                                         FirstName = u.Sender.Profile.FirstName,
+                                         LastName = u.Sender.Profile.LastName,
+                                         ImageUrl = u.Sender.Profile.ProfileUrl
                                      }).ToListAsync();
             return pendingRequestList;
 
         }
 
-        public async Task<User> GetUserFromRequestId(Guid requestId)
+        public async Task<FriendRequest?> GetFriendRequestDataFromRequestId(Guid requestId)
         {
-            var user = await _dbContext.FriendRequests
-                .Include(u => u.Receiver)
+            var friendRequestData = await _dbContext.FriendRequests
                 .Where(r => r.RequestId == requestId)
-                .Select(u => u.Receiver).FirstOrDefaultAsync();
-            return user;
+                .FirstOrDefaultAsync();
+            return friendRequestData;
         }
 
-        public async Task<int> UpdateApproveRejectRequest(ApproveRejectRequestDto requestData)
+        public async Task UpdateFriendRequestStatus(FriendRequest request)
         {
-            var request = await _dbContext.FriendRequests
-                          .FirstOrDefaultAsync(u => u.RequestId == requestData.RequestId);
-            if(request != null)
-            {
-                request.Status = (Enums.FriendRequestStatus?)requestData.Status;
-                _dbContext.SaveChangesAsync();
-            }
-
-            if(requestData.Status == 1)
-            {
-                var friend = new Friend
-                {
-                    UserId = request.ReceiverId,
-                    User = request.Receiver,
-                    FriendId = request.SenderId,
-                    FriendUser = request.Sender,
-                    CreatedAt = DateTime.UtcNow
-
-                };
-                await _dbContext.Friends.AddAsync(friend);
-                _dbContext.SaveChangesAsync();
-
-                var friend1 = new Friend
-                {
-                    UserId = request.SenderId,
-                    User = request.Sender,
-                    FriendId = request.ReceiverId,
-                    FriendUser = request.Receiver,
-                    CreatedAt = DateTime.UtcNow
-
-                };
-                await _dbContext.Friends.AddAsync(friend1);
-                _dbContext.SaveChangesAsync();
-
-                
-
-            }
-            return 1;
-
+            _dbContext.FriendRequests.Update(request);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> CheckFriendRequestStatus(FriendRequestDto friendRequestData, Guid userId)
+        public async Task CreateFriendship(Guid userId, Guid friendId)
+        {
+            _dbContext.Friends.AddRange(
+                new Friend { UserId = userId, FriendId = friendId },
+                new Friend { UserId = friendId, FriendId = userId }
+            );
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<Enums.FriendRequestStatus?> GetFriendStatus(Guid SenderId, Guid ReceiverId)
         {
             var requestStatus = await _dbContext.FriendRequests
                           .Include(u => u.Sender)
                           .Include(u => u.Receiver)
-                          .Where(u => u.SenderId == userId && u.ReceiverId == friendRequestData.ReceiverId)
+                          .Where(u => u.SenderId == SenderId && u.ReceiverId == ReceiverId)
                           .Select(u => u.Status).FirstOrDefaultAsync();
 
-            if(requestStatus!= null)
-            {
-                if((requestStatus == (Enums.FriendRequestStatus?)1))
-                    {
-                    return 1;
-                }
-                if(requestStatus == (Enums.FriendRequestStatus?)0){
-                    return 0;
-                }
-                
-            }
-            return -1;
+            return requestStatus;
         }
 
-        public async Task<List<FriendListDto>> GetFriendsList(Guid userId)
+        public async Task<List<FriendDataDto>> GetFriendsList(Guid userId)
         {
             var friendList = await _dbContext.Friends
-                            .Include(u=>u.User)
-                            .ThenInclude(p => p.Profile)
-                            .Where(u => u.UserId == userId)
-                            .Select(u => new FriendListDto()
-                            {
-                                userName = u.User.UserName,
-                                FirstName = u.User.Profile.FirstName,
-                                LastName = u.User.Profile.LastName,
-                                Bio = u.User.Profile.Bio
-                            }).ToListAsync();
+                .Where(f => f.UserId == userId)
+                .Include(f => f.FriendUser)
+                .ThenInclude(u => u.Profile)
+                .Select(f => new FriendDataDto
+                {
+                    UserName = f.FriendUser.UserName,
+                    FirstName = f.FriendUser.Profile.FirstName ?? "",
+                    LastName = f.FriendUser.Profile.LastName ?? "",
+                    ImageUrl = f.FriendUser.Profile.ProfileUrl ?? "Profile Pic"
+                })
+                .ToListAsync();
+
             return friendList;
         }
 

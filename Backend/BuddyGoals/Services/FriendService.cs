@@ -1,33 +1,41 @@
-﻿using AutoMapper;
+﻿using BuddyGoals.Data;
 using BuddyGoals.DTOs;
 using BuddyGoals.Entities;
+using BuddyGoals.Enums;
 using BuddyGoals.Exceptions;
 using BuddyGoals.Repositories.IRepositories;
 using BuddyGoals.Services.IServices;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BuddyGoals.Services
 {
-    public class FriendService(IFriendRepo friendSearchRepo, IMapper mapper): IFriendService
+    public class FriendService(IFriendRepo friendRepo,IUnitOfWork unitOfWork): IFriendService
     {
-        private readonly IFriendRepo _friendRepo = friendSearchRepo;
-        private readonly IMapper _mapper = mapper;
+        private readonly IFriendRepo _friendRepo = friendRepo;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-       
+
         public async Task<int> AddFriend(FriendRequestDto friendRequestData, Guid userId)
         {
-            var isValidrequest = await _friendRepo.CheckFriendRequestStatus(friendRequestData, userId);
-            if(isValidrequest == 1)
+            var friendRequestStatus = await _friendRepo.GetFriendStatus(userId, friendRequestData.ReceiverId);
+            if(friendRequestStatus != null)
             {
-                throw new ApiException("The user you are trying to add friend is already in your friend list", StatusCodes.Status302Found);
+                if (friendRequestStatus == FriendRequestStatus.Accepted)
+                {
+                    throw new ApiException("The user you are trying to add friend is already in your friend list", StatusCodes.Status409Conflict);
+                }
+                else if (friendRequestStatus == FriendRequestStatus.Pending)
+                {
+                    throw new ApiException("You have already sent friend request for this user", StatusCodes.Status409Conflict);
+                }
             }
-            else if(isValidrequest == 0)
-            {
-                throw new ApiException("You have already sent friend request for this user", StatusCodes.Status302Found);
-            }
-            var friendReqDetails = _mapper.Map<FriendRequest>(friendRequestData);
-            friendReqDetails.Status = (Enums.FriendRequestStatus?)1;
-            friendReqDetails.CreatedAt = DateTime.UtcNow;
-            friendReqDetails.RequestId = Guid.NewGuid(); 
+            var friendReqDetails = new FriendRequest() {
+                SenderId = userId,
+                ReceiverId = friendRequestData.ReceiverId,
+                RequestId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                Status = FriendRequestStatus.Pending
+            };
             return await _friendRepo.AddFriend(friendReqDetails);
         }
 
@@ -36,18 +44,53 @@ namespace BuddyGoals.Services
             return await _friendRepo.GetPendingFriendRequests(userId);
         }
 
-        public async Task<int> UpdateApproveRejectRequest(Guid userId, ApproveRejectRequestDto requestData)
+        public async Task<int> UpdateApproveRejectRequest(Guid userId,Guid requestId, JsonPatchDocument<ApproveRejectRequestDto> patchDoc)
         {
-            var user = await _friendRepo.GetUserFromRequestId(requestData.RequestId);
-            if(user == null || user.UserId != userId)
+            if(patchDoc == null)
+            {
+                throw new ApiException("Invalid Body", StatusCodes.Status400BadRequest);
+            }
+            var friendRequestData = await _friendRepo.GetFriendRequestDataFromRequestId(requestId) ?? throw new ApiException("Invalid RequestId", StatusCodes.Status404NotFound);
+            if (friendRequestData.ReceiverId != userId)
             {
                 throw new ApiException("Invalid user", StatusCodes.Status401Unauthorized);
-
             }
-            return await _friendRepo.UpdateApproveRejectRequest(requestData);
+            if(friendRequestData.Status != FriendRequestStatus.Pending)
+            {
+                throw new ApiException("Only pending requests can be processed", StatusCodes.Status403Forbidden);
+            }
+
+            var dto = new ApproveRejectRequestDto
+            {
+                Status = (FriendRequestStatus)friendRequestData.Status
+            };
+
+            patchDoc.ApplyTo(dto);
+
+            if (dto.Status != FriendRequestStatus.Accepted &&
+                dto.Status != FriendRequestStatus.Rejected)
+            {
+                throw new ApiException("Invalid status value", StatusCodes.Status400BadRequest);
+            }
+
+            friendRequestData.Status = dto.Status;
+            friendRequestData.ModifiedAt = DateTime.UtcNow;
+
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                //  Update the friend request status
+                await _friendRepo.UpdateFriendRequestStatus(friendRequestData);
+
+                //  If accepted, create friendship
+                if (dto.Status == FriendRequestStatus.Accepted)
+                {
+                    await _friendRepo.CreateFriendship(friendRequestData.SenderId, friendRequestData.ReceiverId);
+                }
+            });
+            return 1;
         }
 
-        public async Task<List<FriendListDto>> GetFriendsList(Guid userId)
+        public async Task<List<FriendDataDto>> GetFriendsList(Guid userId)
         {
             return await _friendRepo.GetFriendsList(userId);
         }
