@@ -9,15 +9,17 @@ using Microsoft.AspNetCore.JsonPatch;
 
 namespace BuddyGoals.Services
 {
-    public class FriendService(IFriendRepo friendRepo,IUnitOfWork unitOfWork): IFriendService
+    public class FriendService(IFriendRepo friendRepo,IUnitOfWork unitOfWork,IUserRepo userRepo): IFriendService
     {
         private readonly IFriendRepo _friendRepo = friendRepo;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-
+        private readonly IUserRepo _userRepo = userRepo;
 
         public async Task<int> AddFriend(FriendRequestDto friendRequestData, Guid userId)
         {
-            var friendRequestStatus = await _friendRepo.GetFriendStatus(userId, friendRequestData.ReceiverId);
+            var recieverUser = await _userRepo.GetUserByUserName(friendRequestData.ReceiverUserName) ?? throw new ApiException("Invalid Body",StatusCodes.Status400BadRequest);
+            
+            var friendRequestStatus = await _friendRepo.GetFriendStatus(userId, recieverUser.UserId);
             if(friendRequestStatus != null)
             {
                 if (friendRequestStatus == FriendRequestStatus.Accepted)
@@ -31,7 +33,7 @@ namespace BuddyGoals.Services
             }
             var friendReqDetails = new FriendRequest() {
                 SenderId = userId,
-                ReceiverId = friendRequestData.ReceiverId,
+                ReceiverId = recieverUser.UserId,
                 RequestId = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
                 Status = FriendRequestStatus.Pending

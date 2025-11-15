@@ -2,6 +2,6 @@
 {
     public class FriendRequestDto
     {
-        public Guid ReceiverId { get; set; }
+        public required string ReceiverUserName { get; set; }
     }
 }

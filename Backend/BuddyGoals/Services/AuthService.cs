@@ -5,17 +5,17 @@ using BuddyGoals.Entities;
 using BuddyGoals.Exceptions;
 using BuddyGoals.Repositories.IRepositories;
 using BuddyGoals.Services.IServices;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace BuddyGoals.Services
 {
-    public class AuthService(IUserRepo authRepo, IMapper mapper, IPasswordHasher passwordHasher, IJwtService jwtService, IConfiguration configuration, IRefreshTokenRepo refreshTokenRepo, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,IUserRepo userRepo) : IAuthService
+    public class AuthService(IUserRepo authRepo, IMapper mapper, IPasswordHasher<User> passwordHasher, IJwtService jwtService, IConfiguration configuration, IRefreshTokenRepo refreshTokenRepo, IHttpContextAccessor httpContextAccessor,IUnitOfWork unitOfWork,IUserRepo userRepo) : IAuthService
     {
         private readonly IUserRepo _authRepo = authRepo;
         private readonly IMapper _mapper = mapper;
-        private readonly IPasswordHasher _passwordHasher = passwordHasher;
+        private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
         private readonly IJwtService _jwtService = jwtService;
         private readonly IConfiguration _configuration = configuration;
         private readonly IRefreshTokenRepo _refreshTokenRepo = refreshTokenRepo;
@@ -26,7 +26,7 @@ namespace BuddyGoals.Services
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto, string ipAddress)
         {
             var user = _mapper.Map<User>(registerDto);
-            user.HashedPassowrd = _passwordHasher.HashPassword(registerDto.Password);
+            user.HashedPassword = _passwordHasher.HashPassword(user,registerDto.Password);
             user.CreatedAt = DateTime.UtcNow;
             user.UserId = Guid.NewGuid();
             await _unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -72,8 +72,8 @@ namespace BuddyGoals.Services
             user = await _authRepo.GetUserByEmailAsync(loginDto.Email ?? "");
             if (user != null)
             {
-                var result = _passwordHasher.VerifyHashedPassword(user.HashedPassowrd, loginDto.Password);
-                if (result == Microsoft.AspNet.Identity.PasswordVerificationResult.Success)
+                var result = _passwordHasher.VerifyHashedPassword(user,user.HashedPassword, loginDto.Password);
+                if (result == PasswordVerificationResult.Success)
                 {
                     var generateTokenDto = _mapper.Map<GenerateAccessTokenDto>(user);
                     var accessToken = _jwtService.GenerateAccessToken(generateTokenDto);

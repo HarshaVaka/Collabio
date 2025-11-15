@@ -10,7 +10,7 @@ namespace BuddyGoals.Mappings
         {
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
-                .ForMember(dest => dest.HashedPassowrd, opt => opt.Ignore())
+                .ForMember(dest => dest.HashedPassword, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.ModifiedAt, opt => opt.Ignore());
 

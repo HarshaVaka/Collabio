@@ -1,18 +1,17 @@
 using BuddyGoals;
 using BuddyGoals.Data;
 using BuddyGoals.Data.Seed;
+using BuddyGoals.Entities;
 using BuddyGoals.Mappings;
 using BuddyGoals.Repositories;
 using BuddyGoals.Repositories.IRepositories;
 using BuddyGoals.Services;
 using BuddyGoals.Services.IServices;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System;
 using System.Text;
 
 
@@ -25,13 +24,18 @@ Log.Logger =  new LoggerConfiguration().WriteTo.Console().WriteTo.File("Logs/log
 
 builder.Host.UseSerilog();
 
+builder.Services.Configure<PasswordHasherOptions>(options =>
+{
+    options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2;
+});
+
 
 //Mapper
 builder.Services.AddAutoMapper(typeof(AuthMappingProfile));
 builder.Services.AddAutoMapper(typeof(UserProfileMappingProfile));
 
 //passwordHasher
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddHttpContextAccessor();

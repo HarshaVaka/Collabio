@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.JsonPatch;
 
 namespace BuddyGoals.Services
 {
-    public class UserService(IUserRepo userRepo,IMapper mapper):IUserService
+    public class UserService(IUserRepo userRepo,IMapper mapper,IFriendRepo friendRepo):IUserService
     {
         private readonly IUserRepo _userRepo=userRepo;
         private readonly IMapper _mapper=mapper;
+        private readonly IFriendRepo _friendRepo = friendRepo;
 
         public async Task<UserDetailsDto?> GetUserDetails(string username)
         {
@@ -18,9 +19,16 @@ namespace BuddyGoals.Services
             return userDetails;
         }
 
-        public async Task<UserProfileDto?> GetUserProfileDetails(string username)
+        public async Task<UserProfileDto?> GetUserProfileDetails(string username, string userNameFromToken)
         {
-            var userDetails = await _userRepo.GetUserProfileAsync(username);
+            var userDetails = await _userRepo.GetUserProfileAsync(username)??throw new ApiException("Invalid userName",StatusCodes.Status404NotFound);
+            if(username != userNameFromToken)
+            {
+                var friendshipDetails = await _friendRepo.GetFriendshipDetails(username, userNameFromToken);
+                userDetails.MutualCount = friendshipDetails.MutualCount;
+                userDetails.Status = friendshipDetails.Status;
+                userDetails.RequestId = friendshipDetails.RequestId;
+            }
             return userDetails;
         }
 

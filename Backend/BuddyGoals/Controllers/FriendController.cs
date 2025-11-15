@@ -21,7 +21,7 @@ namespace BuddyGoals.Controllers
         {
             var userName = User.FindFirstValue(ClaimTypes.Name) ?? "";
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)??"";
-            _logger.LogInformation("Sending friend request by {userName} to {recieverId}", userName,friendRequestData.ReceiverId);
+            _logger.LogInformation("Sending friend request by {userName} to {recieverId}", userName,friendRequestData.ReceiverUserName);
             var result = await _friendService.AddFriend(friendRequestData, Guid.Parse(userId));
             return Ok(result);
         }

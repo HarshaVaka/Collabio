@@ -27,12 +27,12 @@ namespace BuddyGoals.Controllers
 
         [HttpGet]
         [Authorize()]
-        [Route("profile")]
-        public async Task<IActionResult> GetUserProfile()
+        [Route("profile/{userName}")]
+        public async Task<IActionResult> GetUserProfile([FromRoute]string userName)
         {
-            var userName = User.FindFirstValue(ClaimTypes.Name) ?? "";
+            var userNameFromToken = User.FindFirstValue(ClaimTypes.Name) ?? "";
             _logger.LogInformation("Fetching profile of user: {UserName}",userName);
-            var result = await _userService.GetUserProfileDetails(userName);
+            var result = await _userService.GetUserProfileDetails(userName,userNameFromToken);
             return Ok(result);
         }
 
