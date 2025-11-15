@@ -53,32 +53,34 @@ namespace BuddyGoals.Repositories
                   .ThenInclude(ur => ur.Role)
                   .FirstOrDefaultAsync(u => u.Email == mail);
         }
-        public async Task<User?> GetUserByUserId(Guid userId)
+        public async Task<User?> GetUserByUserName(string userName)
         {
             return await _dbContext.Users
                 .Include(urm => urm.UserRoles)
                 .ThenInclude(r => r.Role)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+                .FirstOrDefaultAsync(u => u.UserName == userName);
         }
         public async Task<UserProfileDto?> GetUserProfileAsync(string username)
         {
-            var userProfileDetails =  await _dbContext.Users
+            var userProfileDetails = await _dbContext.Users
                 .Include(u => u.Profile)
                 .ThenInclude(p => p.Country)
                 .Where(u => u.UserName == username)
                 .Select(u => new UserProfileDto
                 {
+                    UserId = u.UserId,
                     UserName = u.UserName,
                     Email = u.Email,
                     ProfilePicUrl = "https://media.craiyon.com/2025-07-12/_4dZ32QVTBSVcgD5FEQ6yg.webp",
-                    FirstName = u.Profile.FirstName, 
+                    FirstName = u.Profile.FirstName,
                     LastName = u.Profile.LastName,
                     Bio = u.Profile.Bio,
                     DOB = u.Profile.DOB,
                     CountryCode = u.Profile != null && u.Profile.Country != null ? u.Profile.Country.CountryCode : null,
-                    Country = u.Profile!=null &&  u.Profile.Country!=null ? u.Profile.Country.CountryName:null,
-                    PhoneNo = u.Profile!=null ? u.Profile.PhoneNo:"",
-                    Gender = u.Profile!=null ? u.Profile.Gender:null
+                    Country = u.Profile != null && u.Profile.Country != null ? u.Profile.Country.CountryName : null,
+                    PhoneNo = u.Profile != null ? u.Profile.PhoneNo : "",
+                    Gender = u.Profile != null ? u.Profile.Gender : null,
+                    FriendCount = _dbContext.Friends.Count(f => f.UserId == u.UserId)
                 }).FirstOrDefaultAsync();
             return userProfileDetails;
         }
@@ -108,9 +110,9 @@ namespace BuddyGoals.Repositories
             var usersList = await _dbContext.Users
                 .Include(u => u.Profile)
                 .Where(u =>
-                    u.UserName.ToLower().Contains(param) ||
-                    (u.Profile != null && u.Profile.FirstName.ToLower().Contains(param)) ||
-                    (u.Profile != null && u.Profile.LastName.ToLower().Contains(param))
+                    EF.Functions.ILike(u.UserName, $"%{param}%") ||
+                    (u.Profile != null && EF.Functions.ILike((u.Profile!.FirstName ?? ""), $"%{param}%")) ||
+                    (u.Profile != null && EF.Functions.ILike((u.Profile!.FirstName ?? ""), $"%{param}%"))
                 )
                 .Select(u => new SearchUserDto
                 {

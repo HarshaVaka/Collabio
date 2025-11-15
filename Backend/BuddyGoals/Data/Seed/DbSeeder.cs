@@ -1,5 +1,7 @@
 ﻿using Bogus;
 using BuddyGoals.Entities;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using System;
 
 namespace BuddyGoals.Data.Seed
@@ -7,6 +9,8 @@ namespace BuddyGoals.Data.Seed
     public static class DbSeeder
     {
         private static readonly string[] items = ["Male", "Female", "Other"];
+        private static readonly PasswordHasher<User> _passwordHasher = new();
+
 
         public static void Seed(BuddyGoalsDbContext context)
         {
@@ -19,13 +23,11 @@ namespace BuddyGoals.Data.Seed
             int toGenerate = 973 - existingUserCount;
             Console.WriteLine($"[Seeder] Seeding {toGenerate} mock users...");
 
-            var passwordHash = "hashed123"; // mock hash (use real hashing later)
-
             var userFaker = new Faker<User>()
                 .RuleFor(u => u.UserId, f => Guid.NewGuid())
                 .RuleFor(u => u.UserName, f => f.Internet.UserName())
                 .RuleFor(u => u.Email, f => f.Internet.Email())
-                .RuleFor(u => u.HashedPassowrd, f => passwordHash)
+                .RuleFor(u => u.HashedPassword, (f, u) => _passwordHasher.HashPassword(u, "Password123"))
                 .RuleFor(u => u.CreatedAt, f => f.Date.Past().ToUniversalTime())
                 .RuleFor(u => u.ModifiedAt, f => DateTime.UtcNow)
                 .RuleFor(u => u.CreatedBy, f => "Seeder")

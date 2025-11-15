@@ -15,10 +15,11 @@ export const useUser = () => {
     });
 }
 
-export const useUserProfile =()=>{
+export const useUserProfile =(username:string)=>{
     return useQuery<UserProfile>({
-        queryKey: ["userProfile"],
-        queryFn: () => UserService.fetchUserProfile(),
+        queryKey: ["userProfile",username],
+        queryFn: () => UserService.fetchUserProfile(username),
+        enabled:!!username,
         staleTime: Infinity,
     })
 }

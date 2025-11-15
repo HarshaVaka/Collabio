@@ -12,5 +12,6 @@ namespace BuddyGoals.Repositories.IRepositories
         Task<List<FriendDataDto>> GetFriendsList(Guid userId);
         Task CreateFriendship(Guid userId, Guid friendId);
         Task UpdateFriendRequestStatus(FriendRequest request);
+        Task<FriendshipDetailsDto> GetFriendshipDetails(string username, string userNameFromToken);
     }
 }

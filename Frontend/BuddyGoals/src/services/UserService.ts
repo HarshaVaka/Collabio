@@ -7,8 +7,8 @@ export class UserService {
         return response.data;
     };
 
-    static fetchUserProfile = async () => {
-        const response = await API.get("/user/profile");
+    static fetchUserProfile = async (userName:string) => {
+        const response = await API.get("/user/profile/"+userName);
         return response.data;
     }
 
@@ -18,6 +18,11 @@ export class UserService {
                 "Content-Type": "application/json-patch+json",
             }
         });
+        return response.data;
+    }
+
+    static fetchUsersBySearch = async (searchTerm: string) => {
+        const response = await API.get("/user/usersListBySearchTerm?searchTerm=" + searchTerm);
         return response.data;
     }
 }

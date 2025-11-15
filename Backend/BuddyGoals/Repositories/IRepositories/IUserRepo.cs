@@ -10,7 +10,7 @@ namespace BuddyGoals.Repositories.IRepositories
         Task<UserDetailsDto?> GetUserDetailsAsync(string username);
         Task<User?> GetUserByUserIdAsync(Guid userId);
         Task<User?> GetUserByEmailAsync(string email);
-        Task<User?> GetUserByUserId(Guid userId);
+        Task<User?> GetUserByUserName(string userName);
         Task<UserProfileDto?> GetUserProfileAsync(string username);
         Task<UserProfile?> GetUserProfileByUserIDAsync(Guid userId);
         Task<int> UpdateProfileAsync(UserProfile userProfile);

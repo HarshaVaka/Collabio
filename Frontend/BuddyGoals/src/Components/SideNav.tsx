@@ -14,15 +14,16 @@ import { UserDetail } from "@/types/User.types";
 
 
 export function SideNav() {
+    const [userDetails, setUserDetails] = useState<UserDetail>();
     const navItems = [
         { icon: <HomeIcon size={20} />, label: "Home", route: "/home" },
         { icon: <SearchIcon size={20} />, label: "Explore", route: "/explore" },
         { icon: <ChatIcon size={20} />, label: "Chats", route: "/chats" },
         { icon: <UsersIcon size={20} />, label: "Community", route: "/community" },
         { icon: <SettingsIcon size={20} />, label: "Settings", route: "/settings" },
-        { icon: <UserIcon size={20} />, label: "Profile", route: "/profile" },
+        { icon: <UserIcon size={20} />, label: "Profile", route: `/profile/${userDetails?.userName}` },
     ];
-    const [userDetails, setUserDetails] = useState<UserDetail>();
+   
     const { data, isFetching, isError, error } = useUser();
     useEffect(() => {
         if (isError) {

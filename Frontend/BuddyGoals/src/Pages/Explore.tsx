@@ -1,3 +1,7 @@
+import { SearchUser } from "./Explore/SearchUser";
+
 export function Explore(){
-    return <div>Explore Page</div>;
+    return (
+        <SearchUser/>
+    );
 }
